@@ -32,3 +32,5 @@ class ProductoModelForm(forms.ModelForm):
         if categoria == 'POSTRE' and precio and precio > 500:
             raise ValidationError("Un postre no puede costar más de $500 MXN.")
         return cleaned_data
+    
+    

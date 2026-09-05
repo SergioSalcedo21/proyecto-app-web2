@@ -25,7 +25,16 @@ class PedidoDAO:
 
     @staticmethod
     def obtener_todos() -> List[Pedido]:
-        return Pedido.objects.all().order_by('-fecha')
+        #return Pedido.objects.all().order_by('-fecha')
+        return Pedido.objects.select_related('producto').all().order_by('-fecha')
+
+    @staticmethod
+    def obtener_pendientes_o_en_preparacion() -> List[Pedido]:
+        # NUEVO MÉTODO: Trae solo comandas activas para el panel de cocina
+        return Pedido.objects.select_related('producto').filter(
+            estado__in=['PENDIENTE', 'EN_PREPARACION']
+        ).order_by('fecha')
+
 
     @staticmethod
     def crear_pedido_con_producto(cliente_nombre: str, producto_id: int) -> Optional[Pedido]:
@@ -33,6 +42,7 @@ class PedidoDAO:
         if producto:
             return Pedido.objects.create(
                 cliente_nombre=cliente_nombre,
+                producto=producto,
                 total=producto.precio
             )
         return None
